@@ -1,105 +1,42 @@
-#include<stdio.h>
-#include<stdlib.h>
+﻿#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-int main()
-{
-	run();
-}
+int main() {
+    FILE* inputFile, * outputFile;
+    char inputFileName[] = "input.txt";
+    char outputFileName[] = "output.txt";
+    char line[100];
 
-int run()
-{
-	FILE* file = fopen("file.txt", "r");
+    inputFile = fopen(inputFileName, "r");
+    if (inputFile == NULL) {
+        perror("Error opening file");
+        return 1;
+    }
 
-	openFile(file);
+    outputFile = fopen(outputFileName, "w");
+    if (outputFile == NULL) {
+        perror("Error opening file");
+        return 1;
+    }
 
-	closeFile(file);
+    while (fgets(line, sizeof(line), inputFile)) {
+        int maxDigit = -1;
+        int length = strlen(line);
 
-}
+        for (int i = 0; i < length; i++) {
+            if (line[i] >= '0' && line[i] <= '9' && (line[i] - '0') > maxDigit) {
+                maxDigit = line[i] - '0';
+            }
+        }
 
-int openFile(FILE *fileptrname)
-{
-	//int max = 0;
-	int rows = countFileRows(fileptrname);
-	int* maxArr;
-	int num, i = 0;
-	char c;
+        fprintf(outputFile, "%s%d\n", line, maxDigit);
+    }
 
-	maxArr = (int*)malloc(sizeof(int) * rows);
+    fclose(inputFile);
+    fclose(outputFile);
 
-	for (int r = 0; r < rows; r++)
-	{
-		maxArr[r] = 0;
-	}
+    printf("Success, result in file %s\n", outputFileName);
 
-	if (fileptrname == NULL)
-	{
-		puts("error while opening file");
-		return 1;
-	}
-
-	fseek(fileptrname, 0, SEEK_SET);
-	/*for (int r = 0; r < rows; r++)
-	{
-		fscanf(fileptrname, "%d", &num);
-		fscanf(fileptrname, "%c", &c);
-
-		if (num > maxArr[r])
-		{
-			maxArr[r] = num;
-		}
-
-		if (c == "\n")
-		{
-			i++;
-		}
-	}*/
-
-	while (!feof(fileptrname))
-	{
-		fgetc(fileptrname, "%d", &num);
-		fgetc(fileptrname, "%c", &c);
-
-		if (num > maxArr[i])
-		{
-			maxArr[i] = num;
-		}
-		
-		if (c == "\n")
-		{
-			i++;
-		}
-	}
-
-	//test
-	printf("\n");
-	for (int r = 0; r < rows; r++)
-	{
-		printf("\t%d", maxArr[r]);
-	}
-
-}
-
-int countFileRows(FILE* fileptrname)
-{
-	char c;
-	int rows = 0;
-
-	fseek(fileptrname, 0, SEEK_SET);
-	while (!feof(fileptrname))
-	{
-		c = fgetc(fileptrname);
-		if (c == '\n')
-		{
-			rows++;
-		}
-	}
-
-	return rows;
-}
-
-
-
-int closeFile(FILE *fileptrname)
-{
-	fclose(fileptrname);
+    return 0;
 }
