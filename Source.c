@@ -11,11 +11,15 @@ int run()
 	char line[80];
 	FILE *in = fopen("input.txt", "r"), *out = fopen("output.txt", "w");
 
-	processFile(in, out, line);
-
+	if (processFile(in, out, line) == 0)
+	{
+		printf("Success\nResult in 'output.txt'\n");
+	}
+	else
+	{
+		printf("Error\n");
+	}
 	fclose(in, out);
-
-	printf("Success\nResult in 'output.txt'\n");
 }
 
 int processFile(FILE *fileptrname_1, FILE* fileptrname_2, char row[80])
