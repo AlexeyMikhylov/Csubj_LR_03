@@ -8,98 +8,49 @@ int main()
 
 int run()
 {
-	FILE* file = fopen("file.txt", "r");
+	char line[80];
+	FILE *in = fopen("input.txt", "r"), *out = fopen("output.txt", "w");
 
-	openFile(file);
+	processFile(in, out, line);
 
-	closeFile(file);
+	fclose(in, out);
 
+	printf("Success\nResult in 'output.txt'\n");
 }
 
-int openFile(FILE *fileptrname)
+int processFile(FILE *fileptrname_1, FILE* fileptrname_2, char row[80])
 {
-	//int max = 0;
-	int rows = countFileRows(fileptrname);
-	int* maxArr;
-	int num, i = 0;
-	char c;
+	checkNullFile(fileptrname_1);
+	checkNullFile(fileptrname_2);
 
-	maxArr = (int*)malloc(sizeof(int) * rows);
-
-	for (int r = 0; r < rows; r++)
+	while (fgets(row, sizeof(row), fileptrname_1))
 	{
-		maxArr[r] = 0;
+		int maxDigit = -1;
+		int length = strlen(row);
+
+		for (int i = 0; i < length; i++)
+		{
+			if (row[i] >= '0' && row[i] <= '9'
+				&& (row[i] - '0') > maxDigit)
+			{
+				maxDigit = row[i] - '0';
+			}
+		}
+
+		row[length - 1] = maxDigit + '0';
+		fprintf(fileptrname_2, "%s\n", row);
 	}
 
+	return 0;
+}
+
+int checkNullFile(FILE* fileptrname)
+{
 	if (fileptrname == NULL)
 	{
-		puts("error while opening file");
+		puts("Error opening file");
 		return 1;
 	}
 
-	fseek(fileptrname, 0, SEEK_SET);
-	/*for (int r = 0; r < rows; r++)
-	{
-		fscanf(fileptrname, "%d", &num);
-		fscanf(fileptrname, "%c", &c);
-
-		if (num > maxArr[r])
-		{
-			maxArr[r] = num;
-		}
-
-		if (c == "\n")
-		{
-			i++;
-		}
-	}*/
-
-	while (!feof(fileptrname))
-	{
-		fgetc(fileptrname, "%d", &num);
-		fgetc(fileptrname, "%c", &c);
-
-		if (num > maxArr[i])
-		{
-			maxArr[i] = num;
-		}
-		
-		if (c == "\n")
-		{
-			i++;
-		}
-	}
-
-	//test
-	printf("\n");
-	for (int r = 0; r < rows; r++)
-	{
-		printf("\t%d", maxArr[r]);
-	}
-
-}
-
-int countFileRows(FILE* fileptrname)
-{
-	char c;
-	int rows = 0;
-
-	fseek(fileptrname, 0, SEEK_SET);
-	while (!feof(fileptrname))
-	{
-		c = fgetc(fileptrname);
-		if (c == '\n')
-		{
-			rows++;
-		}
-	}
-
-	return rows;
-}
-
-
-
-int closeFile(FILE *fileptrname)
-{
-	fclose(fileptrname);
+	return 0;
 }
