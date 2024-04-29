@@ -1,56 +1,71 @@
-﻿#include <stdio.h>
-#include <stdlib.h>
+﻿#include<stdio.h>
+#include<stdlib.h>
 
 int main()
 {
-    FILE* sourceFile, * destFile;
-    char sourceFileName[] = "source.txt";
-    char destFileName[] = "reversed.txt";
-    char buffer[1000];
-    int lines = 0;
+	run();
+}
 
-    // Открываем исходный файл для чтения
-    sourceFile = fopen(sourceFileName, "r");
-    if (sourceFile == NULL)
-    {
-        printf("Error opening file\n");
-        return 1;
-    }
+int run()
+{
+	char lines = 0;
+	char buffer[80];
+	FILE* in = fopen("source.txt", "r"), * out = fopen("reversed.txt", "w");
 
-    // Считаем количество строк в исходном файле
-    while (fgets(buffer, sizeof(buffer), sourceFile) != NULL)
-    {
-        lines++;
-    }
+	if (processFile(in, out, lines, buffer) == 0)
+	{
+		printf("Success\nResult in 'reversed.txt'\n");
+	}
+	else
+	{
+		printf("Error\n");
+	}
 
-    // Переходим к последней строке исходного файла
-    rewind(sourceFile);
+	fclose(in, out);
+}
 
-    // Открываем новый файл для записи
-    destFile = fopen(destFileName, "w");
-    if (destFile == NULL)
-    {
-        printf("Error poening file\n");
-        return 1;
-    }
+int processFile(FILE* fileptrname_1, FILE* fileptrname_2, char rows, char word[80])
+{
+	//
+	checkNullFile(fileptrname_1);
 
-    // Читаем строки из исходного файла в обратном порядке и записываем их в новый файл
-    for (int i = lines - 1; i >= 0; i--)
-    {
-        fseek(sourceFile, 0, SEEK_SET);
-        for (int j = 0; j < i; j++)
-        {
-            fgets(buffer, sizeof(buffer), sourceFile);
-        }
-        fgets(buffer, sizeof(buffer), sourceFile);
-        fputs(buffer, destFile);
-    }
+	//считаем количество строк в исходном файле
+	fseek(fileptrname_1, 0, SEEK_SET);
+	while (fgets(word, sizeof(word), fileptrname_1) != NULL)
+	{
+		rows++;
+	}
+	
+	// Переходим к последней строке исходного файла
+	rewind(fileptrname_1);
 
-    // Закрываем файлы
-    fclose(sourceFile);
-    fclose(destFile);
+	//
+	checkNullFile(fileptrname_2);
+	
+	// Читаем строки из исходного файла в обратном порядке и записываем их в новый файл
+	for (int i = rows - 1; i >= 0; i--)
+	{
+		fseek(fileptrname_1, 0, SEEK_SET);
 
-    printf("Success\n");
+		for (int j = 0; j < i; j++)
+		{
+			fgets(word, sizeof(word), fileptrname_1);
+		}
 
-    return 0;
+		fgets(word, sizeof(word), fileptrname_1);
+		fputs(word, fileptrname_2);
+	}
+
+	return 0;
+}
+
+int checkNullFile(FILE* fileptrname)
+{
+	if (fileptrname == NULL)
+	{
+		puts("Error opening file");
+		return 1;
+	}
+
+	return 0;
 }
