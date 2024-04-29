@@ -1,49 +1,55 @@
 ﻿#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
-int main()
-{
-    FILE* inputFile, * outputFile;
-    char inputFileName[] = "input.txt";
-    char outputFileName[] = "output.txt";
-    char line[100];
+int main() {
+    FILE* sourceFile, * destFile;
+    char sourceFileName[] = "source.txt";
+    char destFileName[] = "reversed.txt";
+    char buffer[1000];
+    int lines = 0;
 
-    inputFile = fopen(inputFileName, "r");
-    if (inputFile == NULL)
+    // Открываем исходный файл для чтения
+    sourceFile = fopen(sourceFileName, "r");
+    if (sourceFile == NULL)
     {
-        perror("Error opening file");
+        printf("Error opening file\n");
         return 1;
     }
 
-    outputFile = fopen(outputFileName, "w");
-    if (outputFile == NULL)
+    // Считаем количество строк в исходном файле
+    while (fgets(buffer, sizeof(buffer), sourceFile) != NULL)
     {
-        perror("Error opening file");
+        lines++;
+    }
+
+    // Переходим к последней строке исходного файла
+    rewind(sourceFile);
+
+    // Открываем новый файл для записи
+    destFile = fopen(destFileName, "w");
+    if (destFile == NULL)
+    {
+        printf("Error poening file\n");
         return 1;
     }
 
-    while (fgets(line, sizeof(line), inputFile))
+    // Читаем строки из исходного файла в обратном порядке и записываем их в новый файл
+    for (int i = lines - 1; i >= 0; i--)
     {
-        int maxDigit = -1;
-        int length = strlen(line);
-
-        for (int i = 0; i < length; i++)
+        fseek(sourceFile, 0, SEEK_SET);
+        for (int j = 0; j < i; j++)
         {
-            if (line[i] >= '0' && line[i] <= '9' && (line[i] - '0') > maxDigit)
-            {
-                maxDigit = line[i] - '0';
-            }
+            fgets(buffer, sizeof(buffer), sourceFile);
         }
-
-        line[length - 1] = maxDigit + '0';
-        fprintf(outputFile, "%s\n", line);
+        fgets(buffer, sizeof(buffer), sourceFile);
+        fputs(buffer, destFile);
     }
 
-    fclose(inputFile);
-    fclose(outputFile);
+    // Закрываем файлы
+    fclose(sourceFile);
+    fclose(destFile);
 
-    printf("Success, result in file %s\n", outputFileName);
+    printf("Файл успешно создан с обратным порядком строк.\n");
 
     return 0;
 }
