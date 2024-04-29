@@ -1,7 +1,8 @@
 ﻿#include <stdio.h>
 #include <stdlib.h>
 
-int main() {
+int main()
+{
     FILE* sourceFile, * destFile;
     char sourceFileName[] = "source.txt";
     char destFileName[] = "reversed.txt";
@@ -49,7 +50,7 @@ int main() {
     fclose(sourceFile);
     fclose(destFile);
 
-    printf("Файл успешно создан с обратным порядком строк.\n");
+    printf("Success\n");
 
     return 0;
 }
